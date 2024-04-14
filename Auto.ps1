@@ -11,10 +11,11 @@ foreach ($c in Get-NetAdapter) { write-host 'Setting DNS for' $c.interfaceName ;
 $username = ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name).Split("\")[-1]
 Set-LocalUser -Name $username -FullName UltraMagnus
 
+#office365 install
 curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=O365ProPlusRetail&platform=x64&language=en-us&version=O16GA" -o office.exe
 Start-Process -FilePath "office.exe"
 	 
-# Get Winget clean
+# Get Chocolatey clean
 Import-Module Appx
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
 choco install dotnet-runtime -y
@@ -90,10 +91,9 @@ function Install-OptionalPackage {
   param(
     [string] $PackageName
   )
-  Write-Host ""
   $confirmation = Read-Host "Do you want to install the optional package: $PackageName ? "
 
-  if ($confirmation -eq 'yes', 'y') {
+  if ($confirmation -like 'y*') {
     winget install $PackageName
     Write-Host "Installing optional package: $PackageName"
   } else {
@@ -114,4 +114,15 @@ Install-OptionalPackage "Guru3D.Afterburner"
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1 | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 }" -WindowStyle Hidden
-Write-Host "Script execution initiated. Completed."
+
+$tattoo = @"
+ "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
+         _^___          | $$_____/|__/          |__/          | $$                      | $$
+ L    __/   [] \        | $$       /$$ /$$$$$$$  /$$  /$$$$$$$| $$$$$$$   /$$$$$$   /$$$$$$$
+LOL===__        \       | $$$$$   | $$| $$__  $$| $$ /$$_____/| $$__  $$ /$$__  $$ /$$__  $$
+ L      \________]      | $$__/   | $$| $$  \ $$| $$|  $$$$$$ | $$  \ $$| $$$$$$$$| $$  | $$
+         I   I          | $$      | $$| $$  | $$| $$ \____  $$| $$  | $$| $$_____/| $$  | $$
+        --------/       | $$      | $$| $$  | $$| $$ /$$$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$
+(,(,(,(,(,(,(,(, ")     |__/      |__/|__/  |__/|__/|_______/ |__/  |__/ \_______/ \_______/
+"@
+Write-Host $tattoo
