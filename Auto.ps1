@@ -103,19 +103,22 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "Alex313031.Thorium.AVX2", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "MusicBee.MusicBee", "Faststone.Viewer"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "Alex313031.Thorium.AVX2", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "MusicBee.MusicBee", "Faststone.Viewer", "Gyan.FFmpeg"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
+Install-OptionalPackage "CrystalDewWorld.CrystalDiskInfo.AoiEdition"
+Install-OptionalPackage "CrystalDewWorld.CrystalDiskMark"
 Install-OptionalPackage "Bitdefender.Bitdefender"
 Install-OptionalPackage "Guru3D.Afterburner"
-
+Install-OptionalPackage "Guru3D.RTSS"
+Install-OptionalPackage "TeamViewer.TeamViewer.Host"
 # Open PowerShell instance
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1 | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 }" -WindowStyle Hidden
+EVKey64 | cmd
 
-$tattoo = @"
+$$ = @"
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
  L    __/   [] \        | $$       /$$ /$$$$$$$  /$$  /$$$$$$$| $$$$$$$   /$$$$$$   /$$$$$$$
@@ -125,4 +128,4 @@ LOL===__        \       | $$$$$   | $$| $$__  $$| $$ /$$_____/| $$__  $$ /$$__  
         --------/       | $$      | $$| $$  | $$| $$ /$$$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$
 (,(,(,(,(,(,(,(, ")     |__/      |__/|__/  |__/|__/|_______/ |__/  |__/ \_______/ \_______/
 "@
-Write-Host $tattoo
+Write-Host $$
