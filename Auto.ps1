@@ -12,9 +12,11 @@ $username = ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name).Spl
 Set-LocalUser -Name $username -FullName UltraMagnus
 
 #office365 install
+if (!(Test-Path office.exe)) {
 curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=O365ProPlusRetail&platform=x64&language=en-us&version=O16GA" -o office.exe
 Start-Process -FilePath "office.exe"
-	 
+}
+
 # Get Chocolatey clean
 Import-Module Appx
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
