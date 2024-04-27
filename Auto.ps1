@@ -19,8 +19,7 @@ Start-Process -FilePath "office.exe"
 
 # Get Chocolatey clean
 Import-Module Appx
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
-choco install dotnet-runtime -y
+#skip-bcoz-stupid-dependencies-loophole
 
 # Fetch the URI of the latest version of the winget-cli from GitHub releases
 $latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object { $_.EndsWith('.msixbundle') }
@@ -82,7 +81,7 @@ function Install-RequiredPackage {
 
   # Loop through each string in the list
   foreach ($item in $StringList) {
-    Write-Host "Installing item: $item"
+    Write-Host "Installing package: $item"
     winget install --id $item --accept-source-agreements --accept-package-agreements
     # Add your logic here to process each string item ($item)
     # For example, you could call another function or perform some operation on the string
@@ -105,7 +104,7 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Giorgiotani.Peazip", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "Alex313031.Thorium.AVX2", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "MusicBee.MusicBee", "Faststone.Viewer", "Gyan.FFmpeg"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "Alex313031.Thorium.AVX2", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "MusicBee.MusicBee", "Faststone.Viewer", "Gyan.FFmpeg"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
@@ -119,8 +118,9 @@ Install-OptionalPackage "TeamViewer.TeamViewer.Host"
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1 | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 EVKey64 | cmd
+Remove-Item -Path . -Force -Recurse -Exclude "office.exe" -ItemType File, Directory -Verbose
 
-$$ = @"
+$l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
  L    __/   [] \        | $$       /$$ /$$$$$$$  /$$  /$$$$$$$| $$$$$$$   /$$$$$$   /$$$$$$$
@@ -129,5 +129,5 @@ LOL===__        \       | $$$$$   | $$| $$__  $$| $$ /$$_____/| $$__  $$ /$$__  
          I   I          | $$      | $$| $$  | $$| $$ \____  $$| $$  | $$| $$_____/| $$  | $$
         --------/       | $$      | $$| $$  | $$| $$ /$$$$$$$/| $$  | $$|  $$$$$$$|  $$$$$$$
 (,(,(,(,(,(,(,(, ")     |__/      |__/|__/  |__/|__/|_______/ |__/  |__/ \_______/ \_______/
-"@
-Write-Host $$
+'@
+Write-Host $l
