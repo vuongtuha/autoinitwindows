@@ -3,10 +3,10 @@ cd ([Environment]::GetFolderPath("MyDocuments"))
 Set-TimeZone -Name "SE Asia Standard Time"
 $RegKeyPath = "HKU:\Control Panel\International"
 Import-Module International
-Set-WinSystemLocale en-GB
+Set-WinSystemLocale en-US
 Set-WinHomeLocation -GeoId 0xF2
 Set-Culture en-GB
-Set-WinUserLanguageList en-GB -Force
+Set-WinUserLanguageList en-US -Force
 foreach ($c in Get-NetAdapter) { write-host 'Setting DNS for' $c.interfaceName ; Set-DnsClientServerAddress -InterfaceIndex $c.interfaceindex -ServerAddresses ('8.8.8.8', '8.8.4.4') }
 $username = ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name).Split("\")[-1]
 Set-LocalUser -Name $username -FullName UltraMagnus
@@ -117,9 +117,9 @@ Install-OptionalPackage "TeamViewer.TeamViewer.Host"
 # Open PowerShell instance
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1 | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
-EVKey64 | cmd
-Remove-Item -Path . -Force -Recurse -Exclude "office.exe" -ItemType File, Directory -Verbose
-
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 | cmd }" -WindowStyle Hidden
+Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
+Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | foreach { Remove-Item -Force -Recurse -Path $_}
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
