@@ -21,6 +21,12 @@ Start-Process -FilePath "office.exe"
 Import-Module Appx
 #skip-bcoz-stupid-dependencies-loophole
 
+#Driver-autotool
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& {
+cd ([Environment]::GetFolderPath("Desktop"))
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/releases/download/11.4.0.60/Driver_B00ster_Pro_11.4.0.60.tar.gz" -o driver.tar.gz
+}
+
 # Fetch the URI of the latest version of the winget-cli from GitHub releases
 $latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object { $_.EndsWith('.msixbundle') }
 
