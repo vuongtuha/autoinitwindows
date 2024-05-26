@@ -22,11 +22,11 @@ Import-Module Appx
 #skip-bcoz-stupid-dependencies-loophole
 
 #Driver-autotool
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& {
-cd ([Environment]::GetFolderPath("Desktop"))
-curl -Uri "https://github.com/vuongtuha/autoinitwindows/releases/download/11.4.0.60/Driver_B00ster_Pro_11.4.0.60.tar.gz" -o driver.tar.gz
-}
 
+Start-Process PowerShell -ArgumentList "-Command", "& {
+cd ([Environment]::GetFolderPath('Desktop'))
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/11.4.0.60/Driver_B00ster_Pro_11.4.0.60.tar.gz -o driver.tar.gz
+}"
 # Fetch the URI of the latest version of the winget-cli from GitHub releases
 $latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object { $_.EndsWith('.msixbundle') }
 
@@ -125,7 +125,7 @@ Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 | cmd }" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
-Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | foreach { Remove-Item -Force -Recurse -Path $_}
+Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -ne "office.exe"} | Remove-Item -Force -Recurse -Path $_.FullName
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
