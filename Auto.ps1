@@ -25,53 +25,87 @@ Import-Module Appx
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
 cd ([Environment]::GetFolderPath('Desktop'))
-Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/11.4.0.60/Driver_B00ster_Pro_11.4.0.60.tar.gz -o driver.tar.gz
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.1.0.469/Driver_B00ster_Pro_12.1.0.469.7z -o driver.tar.gz
 }"
-# Fetch the URI of the latest version of the winget-cli from GitHub releases
-$latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object { $_.EndsWith('.msixbundle') }
+if ($osVersion -match "^10\.") {
+$progressPreference = 'silentlyContinue'
+# Set the environment variable for the root of the temp folder
+$LogPath = $env:TEMP
 
-# Extract the name of the .msixbundle file from the URI
-$latestWingetMsixBundle = $latestWingetMsixBundleUri.Split('/')[-1]
+# Set the XML Dependency
+$UIXAMLDependency = "Microsoft.UI.Xaml"
+$UIXAMLAPPXDependency = $env:ProgramFiles + "\PackageManagement\NuGet\Packages\Microsoft.UI.Xaml.2.7.0\tools\AppX\x64\Release\Microsoft.UI.Xaml.2.7.appx"
+$VCDependency = "Microsoft.VCLibs.x64.14.00.Desktop.appx"
 
-# Show a progress message for the first download step
-Write-Progress -Activity 'Installing Winget CLI' -Status 'Downloading Step 1 of 2'
+# Configure download location for Winget
+$latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object {$_.EndsWith(".msixbundle")}
+$latestWingetMsixBundle = $latestWingetMsixBundleUri.Split("/")[-1]
 
-# Temporarily set the ProgressPreference variable to SilentlyContinue to suppress progress bars
-Set-Variable ProgressPreference SilentlyContinue
-
-Invoke-WebRequest -Uri https://www.nuget.org/api/v2/package/Microsoft.UI.Xaml -OutFile .\microsoft.ui.xaml.nupkg.zip
-Expand-Archive -Path .\microsoft.ui.xaml.nupkg.zip -Force
-
-# Get the .appx file in the directory
-$appxFile = Get-ChildItem -Path .\microsoft.ui.xaml.nupkg\tools\AppX\x64\Release -Filter "*.appx" | Select-Object -First 1
-
-# Install the .appx file
-Try { Add-AppxPackage -Path $appxFile.FullName -ErrorAction Stop } Catch {}
-
-# Download the latest .msixbundle file of winget-cli from GitHub releases
+# Download Microsoft binaries.
+Write-Information "Downloading winget to current directory..."
 Invoke-WebRequest -Uri $latestWingetMsixBundleUri -OutFile "./$latestWingetMsixBundle"
-
-# Reset the ProgressPreference variable to Continue to allow progress bars
-Set-Variable ProgressPreference Continue
-
-# Show a progress message for the second download step
-Write-Progress -Activity 'Installing Winget CLI' -Status 'Downloading Step 2 of 2'
-
-Set-Variable ProgressPreference SilentlyContinue
-
-# Download the VCLibs .appx package from Microsoft
 Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile Microsoft.VCLibs.x64.14.00.Desktop.appx
 
-# Try to install the VCLibs .appx package, suppressing any error messages
-Try { Add-AppxPackage Microsoft.VCLibs.x64.14.00.Desktop.appx -ErrorAction Stop } Catch {}
+# Workaround for Microsoft.UI.Xaml dependency.
+# Creates an additional dependency on Microsoft.Web.Webview2
+# Detection logic was breaking the silent install. Just installing NuGet's package provider.
+Write-Information "Install Nuget..."
+Install-PackageProvider -Name NuGet -Force -Scope CurrentUser -Confirm:$false
 
-# Install the latest .msixbundle file of winget-cli
-Try { Add-AppxPackage $latestWingetMsixBundle -ErrorAction Stop} Catch {}
-Write-Progress -Activity 'Installing Winget CLI' -Status 'Install Complete' -Completed
-Set-Variable ProgressPreference Continue
-# Get Windows version information
-$osVersion = (Get-WmiObject Win32_OperatingSystem).Version
+# Install Winget PowerShell Module
+# Check if Nuget Module is installed
+Write-Information "Checking for Nuget Powershell Module..."
+if(-not (Get-Module -ListAvailable -Name NuGet)) {
+    # Install the Nuget PowerShell Module
+    Write-Information "Nuget Powershell Module not found. Installing..."
+    Install-Module -Name NuGet -Force
+}
+Write-Information "Nuget Powershell Module found."
 
+# Configure Nuget.org repository
+# Check if Nuget.org repository is registered
+Write-Information "Check if Nuget.org repository is registered..."
+if(-not (Get-PackageSource | Where-Object { $_.Name -eq 'nuget.org' })) 
+{
+    # Register the Nuget.org repository
+    Write-Information "Nuget.org repository not found. Registering..."
+    Register-PackageSource -Name nuget.org -Location https://www.nuget.org/api/v2 -ProviderName NuGet
+}
+Write-Information "Nuget.org repository found."
+
+# Install Microsoft.UI.Xaml
+# Check if UI Xaml is installed
+Write-Information "Checking for Microsoft UI XAML..."
+if (-not (Get-Package -Name $UIXAMLDependency -RequiredVersion 2.7 -ErrorAction SilentlyContinue)) 
+{
+    Write-Information "Installing Microsoft UI XAML..."
+    Install-Package $UIXAMLDependency -RequiredVersion 2.7 -Force
+    Add-AppxPackage $UIXAMLAPPXDependency
+}
+Write-Information "Microsoft UI XAML found."
+
+# Install VC++ Libs
+# Check if VC++ Libs  is installed
+Write-Information "Checking for VC dependency..."
+if (-not (Get-AppxPackage -Name $VCDependency -ErrorAction SilentlyContinue)) 
+{
+    # Install VC++
+    Write-Information "Installing VC dependency..."
+    Add-AppxPackage "./$VCDependency" -ErrorAction SilentlyContinue
+}
+Write-Information "VC dependency installed."
+
+# Install winget
+# Check if winget is installed
+Write-Information "Checking for Winget..."
+$wingetPackageName = $latestWingetMsixBundle.Split(".")[0]
+if (-not (Get-AppxPackage -Name $wingetPackageName -ErrorAction SilentlyContinue)) 
+{
+    Write-Information "Installing winget..."
+    Add-AppxPackage "./$latestWingetMsixBundle"
+}
+Write-Information "Winget installed."
+}
 # Check for Windows 10 based on major version number (modify if needed)
 if ($osVersion -match "^10\.") {
   $Manifest = (Get-AppxPackage Microsoft.DesktopAppInstaller).InstallLocation + '\appxmanifest.xml'; Add-AppxPackage -DisableDevelopmentMode -Register $Manifest
