@@ -1,3 +1,9 @@
+# Check for Windows 10 based on major version number (modify if needed)
+if ($osVersion -match "^10\.") {
+  $Manifest = (Get-AppxPackage Microsoft.DesktopAppInstaller).InstallLocation + '\appxmanifest.xml'; Add-AppxPackage -DisableDevelopmentMode -Register $Manifest
+} else {
+  Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://github.com/asheroto/winget-install/releases/latest/download/winget-install.ps1 | iex }" -WindowStyle Hidden
+}
 #Standardize Settings
 cd ([Environment]::GetFolderPath("MyDocuments"))
 Set-TimeZone -Name "SE Asia Standard Time"
@@ -28,12 +34,7 @@ cd ([Environment]::GetFolderPath('Desktop'))
 Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.1.0.469/Driver_B00ster_Pro_12.1.0.469.7z -o driver.tar.gz
 }"
 
-# Check for Windows 10 based on major version number (modify if needed)
-if ($osVersion -match "^10\.") {
-  $Manifest = (Get-AppxPackage Microsoft.DesktopAppInstaller).InstallLocation + '\appxmanifest.xml'; Add-AppxPackage -DisableDevelopmentMode -Register $Manifest
-} else {
-  irm https://github.com/asheroto/winget-install/releases/latest/download/winget-install.ps1 | iex
-}
+
 
 ###
 function Install-RequiredPackage {
@@ -77,8 +78,8 @@ Install-OptionalPackage "Guru3D.Afterburner"
 Install-OptionalPackage "Guru3D.RTSS"
 Install-OptionalPackage "TeamViewer.TeamViewer.Host"
 # Open PowerShell instance
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
 Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\lamquangminh.EVKey_Microsoft.Winget.Source_8wekyb3d8bbwe\EVKey64" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
