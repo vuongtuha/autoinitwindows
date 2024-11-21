@@ -155,9 +155,9 @@ Install-OptionalPackage "Guru3D.Afterburner"
 Install-OptionalPackage "Guru3D.RTSS"
 Install-OptionalPackage "TeamViewer.TeamViewer.Host"
 # Open PowerShell instance
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1 | iex }" -WindowStyle Hidden
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm "https://christitus.com/win" | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { EVKey64 | cmd }" -WindowStyle Hidden
+Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\lamquangminh.EVKey_Microsoft.Winget.Source_8wekyb3d8bbwe\EVKey64" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 $l = @'
