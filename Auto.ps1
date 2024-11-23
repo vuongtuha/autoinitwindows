@@ -1,5 +1,5 @@
 # Check for Windows 10 based on major version number (modify if needed)
-if ($osVersion -match "^10\.") {
+if ((Get-ComputerInfo | Select-Object -expand OsName) -match 11) {
   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
   choco install --reinstall winget --force -y
 } else {
@@ -25,8 +25,12 @@ curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?Productrelease
 Start-Process -FilePath "office.exe"
 }
 
-# Get Chocolatey clean
+# Pretty useless stuff
 Import-Module Appx
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/user-192.png?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
+$Key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+Set-ItemProperty -Path $Key -Name LockScreenImagePath -value "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 #skip-bcoz-stupid-dependencies-loophole
 
 #Driver-autotool
