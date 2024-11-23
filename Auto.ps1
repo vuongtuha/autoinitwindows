@@ -1,6 +1,7 @@
 # Check for Windows 10 based on major version number (modify if needed)
 if ($osVersion -match "^10\.") {
-  $Manifest = (Get-AppxPackage Microsoft.DesktopAppInstaller).InstallLocation + '\appxmanifest.xml'; Add-AppxPackage -DisableDevelopmentMode -Register $Manifest
+  Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+  choco install --reinstall winget --force -y
 } else {
   Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://github.com/asheroto/winget-install/releases/latest/download/winget-install.ps1 | iex }" -WindowStyle Hidden
 }
@@ -12,6 +13,7 @@ Import-Module International
 Set-WinSystemLocale en-US
 Set-WinHomeLocation -GeoId 0xF2
 Set-WinUserLanguageList en-US -Force
+Start-Sleep 1
 Set-Culture en-GB
 foreach ($c in Get-NetAdapter) { write-host 'Setting DNS for' $c.interfaceName ; Set-DnsClientServerAddress -InterfaceIndex $c.interfaceindex -ServerAddresses ('8.8.8.8', '8.8.4.4') }
 $username = ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name).Split("\")[-1]
