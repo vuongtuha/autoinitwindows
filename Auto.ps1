@@ -2,6 +2,7 @@
 if ((Get-ComputerInfo | Select-Object -expand OsName) -match 11) {
   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
   choco install --reinstall winget --force -y
+  winget source update 
 } else {
   Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://github.com/asheroto/winget-install/releases/latest/download/winget-install.ps1 | iex }" -WindowStyle Hidden
 }
@@ -29,8 +30,25 @@ Start-Process -FilePath "office.exe"
 Import-Module Appx
 curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/user-192.png?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
-$Key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
-Set-ItemProperty -Path $Key -Name LockScreenImagePath -value "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
+$uap = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+
+$lsw = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+
+if (!(Test-Path -Path $uap)) {
+
+  New-Item -Path $uap -Force | Out-Null
+
+}
+
+if (!(Test-Path -Path $lsw)) {
+
+  New-Item -Path $lsw -Force | Out-Null
+
+}
+
+New-ItemProperty -Path $uap -Name "UseDefaultTile" -PropertyType "DWORD" -Value "1"
+
+Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 #skip-bcoz-stupid-dependencies-loophole
 
 #Driver-autotool
