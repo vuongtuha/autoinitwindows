@@ -1,10 +1,38 @@
-# Check for Windows 10 based on major version number (modify if needed)
-if ((Get-ComputerInfo | Select-Object -expand OsName) -match 11) {
-  Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-  choco install --reinstall winget --force -y
-  winget source update 
-} else {
-  Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://github.com/asheroto/winget-install/releases/latest/download/winget-install.ps1 | iex }" -WindowStyle Hidden
+# Check for Windows 10 based on major version number (no matter anymore)
+Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+Set-ExecutionPolicy Bypass -Scope Process -Force
+if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
+{ 
+    Write-Output "WinGet is not present on the system"
+    if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
+        Write-Output "Microsoft.WinGet.Client is not installed or is not on the latest version"
+        try
+        {
+            Write-Output "Attempting to uninstall an older version of Microsoft.WinGet.Client..."
+            Uninstall-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser    
+        }
+        catch 
+        {
+            Write-Output "Microsoft.WinGet.Client was not installed."
+        }
+        Write-Output "Installing Microsoft.WinGet.Client..."
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false -Scope CurrentUser
+        Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+        Write-Output "Microsoft.WinGet.Client was installed successfully"
+    }
+
+    Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
+    if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.8.1791')
+    {
+        Write-Output "Microsoft.WinGet.Client is up-to-date"
+    } else {
+        Write-Output "Updating Microsoft.WinGet.Client module..."
+        Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+    }
+
+    Write-Output "Installing WinGet..."
+    Repair-WinGetPackageManager
+    Write-Output "WinGet was installed successfully"
 }
 #Standardize Settings
 cd ([Environment]::GetFolderPath("MyDocuments"))
@@ -19,6 +47,11 @@ Set-Culture en-GB
 foreach ($c in Get-NetAdapter) { write-host 'Setting DNS for' $c.interfaceName ; Set-DnsClientServerAddress -InterfaceIndex $c.interfaceindex -ServerAddresses ('8.8.8.8', '8.8.4.4') }
 $username = ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name).Split("\")[-1]
 Set-LocalUser -Name $username -FullName UltraMagnus
+net stop w32time
+w32tm /unregister
+w32tm /register
+net start w32time
+w32tm /resync /nowait
 
 #office365 install
 if (!(Test-Path office.exe)) {
