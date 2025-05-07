@@ -1,39 +1,3 @@
-# Check for Windows 10 based on major version number (no matter anymore)
-Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
-Set-ExecutionPolicy Bypass -Scope Process -Force
-if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
-{ 
-    Write-Output "WinGet is not present on the system"
-    if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
-        Write-Output "Microsoft.WinGet.Client is not installed or is not on the latest version"
-        try
-        {
-            Write-Output "Attempting to uninstall an older version of Microsoft.WinGet.Client..."
-            Uninstall-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser    
-        }
-        catch 
-        {
-            Write-Output "Microsoft.WinGet.Client was not installed."
-        }
-        Write-Output "Installing Microsoft.WinGet.Client..."
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false -Scope CurrentUser
-        Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
-        Write-Output "Microsoft.WinGet.Client was installed successfully"
-    }
-
-    Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
-    if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.8.1791')
-    {
-        Write-Output "Microsoft.WinGet.Client is up-to-date"
-    } else {
-        Write-Output "Updating Microsoft.WinGet.Client module..."
-        Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
-    }
-
-    Write-Output "Installing WinGet..."
-    Repair-WinGetPackageManager
-    Write-Output "WinGet was installed successfully"
-}
 #Standardize Settings
 cd ([Environment]::GetFolderPath("MyDocuments"))
 Set-TimeZone -Name "SE Asia Standard Time"
@@ -52,6 +16,44 @@ w32tm /unregister
 w32tm /register
 net start w32time
 w32tm /resync /nowait
+
+# Check for Windows 10 based on major version number (no matter anymore)
+Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+Set-ExecutionPolicy Bypass -Scope Process -Force
+if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
+{ 
+    Write-Output "WinGet is not present on the system"
+    if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
+        Write-Output "Microsoft.WinGet.Client is not installed or is not on the latest version"
+        try
+        {
+            Write-Output "Attempting to uninstall an older version of Microsoft.WinGet.Client..."
+            Uninstall-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser    
+        }
+        catch 
+        {
+            Write-Output "Microsoft.WinGet.Client was not installed."
+        }
+        Write-Output "Installing Microsoft.WinGet.Client..."
+        Install-PackageProvider -Name NuGet -Force -Confirm:$false -Scope CurrentUser
+        Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+        Write-Output "Microsoft.WinGet.Client was installed successfully"
+    }
+
+    Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
+    if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.11.230')
+    {
+        Write-Output "Microsoft.WinGet.Client is up-to-date"
+    } else {
+        Write-Output "Updating Microsoft.WinGet.Client module..."
+        Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+    }
+
+    Write-Output "Installing WinGet..."
+    Repair-WinGetPackageManager
+    Write-Output "WinGet was installed successfully"
+}
+
 
 #office365 install
 if (!(Test-Path office.exe)) {
@@ -88,7 +90,7 @@ Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Mi
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
 cd ([Environment]::GetFolderPath('Desktop'))
-Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.1.0.469/Driver_B00ster_Pro_12.1.0.469.7z -o driver.tar.gz
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.4.0.571/Driver_B00ster_Pro_12.4.0.571.7z -o driver.tar.gz
 }"
 
 
@@ -124,19 +126,19 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "Alex313031.Thorium.AVX2", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "MusicBee.MusicBee", "Faststone.Viewer", "Gyan.FFmpeg"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "PeterPawlowski.foobar2000", "Faststone.Viewer"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
-Install-OptionalPackage "CrystalDewWorld.CrystalDiskInfo.AoiEdition"
-Install-OptionalPackage "CrystalDewWorld.CrystalDiskMark"
+#Install-OptionalPackage "CrystalDewWorld.CrystalDiskInfo.AoiEdition"
+#Install-OptionalPackage "CrystalDewWorld.CrystalDiskMark"
 Install-OptionalPackage "Bitdefender.Bitdefender"
 Install-OptionalPackage "Guru3D.Afterburner"
 Install-OptionalPackage "Guru3D.RTSS"
-Install-OptionalPackage "TeamViewer.TeamViewer.Host"
+Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://massgrave.dev/get | iex }" -WindowStyle Hidden
 Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\lamquangminh.EVKey_Microsoft.Winget.Source_8wekyb3d8bbwe\EVKey64" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
