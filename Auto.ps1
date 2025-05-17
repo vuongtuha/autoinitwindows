@@ -63,7 +63,7 @@ if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue))
 #office365 install
 if (!(Test-Path office.exe)) {
 curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=O365ProPlusRetail&platform=x64&language=en-us&version=O16GA" -o office.exe
-Start-Process -FilePath "office.exe"
+Start-Process -FilePath "office.exe" -WindowStyle Hidden
 }
 
 # Pretty useless stuff
