@@ -74,6 +74,8 @@ $uap = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 
 $lsw = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
 
+Set-Itemproperty -path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'HideFileExt' -value 0
+
 if (!(Test-Path -Path $uap)) {
 
   New-Item -Path $uap -Force | Out-Null
@@ -95,7 +97,7 @@ Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Mi
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
 cd ([Environment]::GetFolderPath('Desktop'))
-Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.4.0.571/Driver_B00ster_Pro_12.4.0.571.7z -o driver.tar.gz
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.4.0.585/Driver_B00ster_Pro_12.4.0.585.7z -o driver.tar.gz
 }"
 
 
@@ -131,7 +133,7 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "lamquangminh.EVKey", "MPC-BE.MPC-BE", "PeterPawlowski.foobar2000", "Faststone.Viewer"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "lamquangminh.EVKey", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "StartIsBack.StartAllBack", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "HiBitSoftware.HiBitUninstaller"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
@@ -147,6 +149,7 @@ Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https
 Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\lamquangminh.EVKey_Microsoft.Winget.Source_8wekyb3d8bbwe\EVKey64" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
+regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
