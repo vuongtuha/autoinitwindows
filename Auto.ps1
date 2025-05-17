@@ -17,6 +17,11 @@ w32tm /register
 net start w32time
 w32tm /resync /nowait
 
+#Pronounce check
+Install-PackageProvider -Name NuGet -Force | Out-Null
+Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
+Repair-WinGetPackageManager -IncludePrerelease -AllUsers
+
 # Check for Windows 10 based on major version number (no matter anymore)
 Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
 Set-ExecutionPolicy Bypass -Scope Process -Force
