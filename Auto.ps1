@@ -24,7 +24,7 @@ Repair-WinGetPackageManager -IncludePrerelease -AllUsers
 
 # Check for Windows 10 based on major version number (no matter anymore)
 Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
-Set-ExecutionPolicy Bypass -Scope Process -Force
+Set-ExecutionPolicy Bypass -Scope Process -Confirm:$False
 if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
 { 
     Write-Output "WinGet is not present on the system"
