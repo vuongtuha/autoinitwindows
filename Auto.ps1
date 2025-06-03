@@ -17,47 +17,123 @@ w32tm /register
 net start w32time
 w32tm /resync /nowait
 
+#Fix-100-disk-hdd-fck-up
+# --- SYSTEM FILE CHECKER STARTED ---
+Write-Host "--- SYSTEM FILE CHECKER STARTED ---"
+
+sfc /scannow
+
+Write-Host ""
+
+# --- DISM SCAN STARTED ---
+Write-Host "--- DISM SCAN STARTED ---"
+Write-Host ""
+
+DISM /Online /Cleanup-Image /ScanHealth
+
+Write-Host ""
+Write-Host ""
+
+# --- DISM REPAIR STARTED ---
+Write-Host "--- DISM REPAIR STARTED ---"
+DISM /Online /Cleanup-Image /RestoreHealth
+Write-Host "Done..."
+Write-Host ""
+
+# --- Temp File Removal Started ---
+Write-Host "--- Temp File Removal Started ---"
+
+Remove-Item -Path "c:\windows\temp\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\temp" -Force -Recurse -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path "c:\windows\temp" -Force | Out-Null
+
+Remove-Item -Path "C:\WINDOWS\Prefetch\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "$env:TEMP\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:TEMP" -Force -Recurse -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path "$env:TEMP" -Force | Out-Null
+
+Remove-Item -Path "c:\windows\tempor~1" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\tempor~1\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\temp" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\temp\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\tmp" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\tmp\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\ff*.tmp" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\history" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\history\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\cookies" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\cookies\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\recent" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\recent\*" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\windows\spool\printers\*" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "c:\windows\spool\printers" -Force -Recurse -ErrorAction SilentlyContinue
+
+Remove-Item -Path "c:\WIN386.SWP" -Force -ErrorAction SilentlyContinue
+
+Write-Host "Done!"
+Write-Host ""
+
+# --- Reset Windows Updates Starting ---
+Write-Host "--- Reset Windows Updates Starting ---"
+Write-Host ""
+
+Stop-Service -Name "wuauserv" -Force
+Read-Host "Press any key to continue..."
+Start-Service -Name "wuauserv" -Force
+
+Write-Host ""
+Write-Host "Task completed successfully..."
+Write-Host ""
+###
 #Pronounce check
 Install-PackageProvider -Name NuGet -Force | Out-Null
 Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
 Repair-WinGetPackageManager -IncludePrerelease -AllUsers
 
 # Check for Windows 10 based on major version number (no matter anymore)
-Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
-Set-ExecutionPolicy Bypass -Scope Process -Confirm:$False
-if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
-{ 
-    Write-Output "WinGet is not present on the system"
-    if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
-        Write-Output "Microsoft.WinGet.Client is not installed or is not on the latest version"
-        try
-        {
-            Write-Output "Attempting to uninstall an older version of Microsoft.WinGet.Client..."
-            Uninstall-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser    
-        }
-        catch 
-        {
-            Write-Output "Microsoft.WinGet.Client was not installed."
-        }
-        Write-Output "Installing Microsoft.WinGet.Client..."
-        Install-PackageProvider -Name NuGet -Force -Confirm:$false -Scope CurrentUser
-        Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
-        Write-Output "Microsoft.WinGet.Client was installed successfully"
-    }
-
-    Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
-    if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.11.230')
-    {
-        Write-Output "Microsoft.WinGet.Client is up-to-date"
-    } else {
-        Write-Output "Updating Microsoft.WinGet.Client module..."
-        Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
-    }
-
-    Write-Output "Installing WinGet..."
-    Repair-WinGetPackageManager
-    Write-Output "WinGet was installed successfully"
-}
+#Get-AppxPackage -allusers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+#Set-ExecutionPolicy Bypass -Scope Process -Confirm:$False
+#if ($null -eq (Get-Command "winget.exe" -ErrorAction SilentlyContinue)) 
+#{ 
+#    Write-Output "WinGet is not present on the system"
+#    if (!(Get-Command -Verb Repair -Noun WinGetPackageManager)) {
+#        Write-Output "Microsoft.WinGet.Client is not installed or is not on the latest version"
+#        try
+#        {
+#            Write-Output "Attempting to uninstall an older version of Microsoft.WinGet.Client..."
+#            Uninstall-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser    
+#        }
+#        catch 
+#        {
+#            Write-Output "Microsoft.WinGet.Client was not installed."
+#        }
+#        Write-Output "Installing Microsoft.WinGet.Client..."
+#        Install-PackageProvider -Name NuGet -Force -Confirm:$false -Scope CurrentUser
+#        Install-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+#        Write-Output "Microsoft.WinGet.Client was installed successfully"
+#    }
+#
+#    Write-Output "Checking for updates for Microsoft.WinGet.Client module..."
+#    if ((Get-Module -Name Microsoft.WinGet.Client -ListAvailable).Version -ge '1.11.230')
+#    {
+#        Write-Output "Microsoft.WinGet.Client is up-to-date"
+#    } else {
+#        Write-Output "Updating Microsoft.WinGet.Client module..."
+#        Update-Module -Name Microsoft.WinGet.Client -Confirm:$false -Force -Scope CurrentUser
+#    }
+#
+#    Write-Output "Installing WinGet..."
+#    Repair-WinGetPackageManager
+#    Write-Output "WinGet was installed successfully"
+#}
 
 
 #office365 install
@@ -133,7 +209,7 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "lamquangminh.EVKey", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "StartIsBack.StartAllBack", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "HiBitSoftware.HiBitUninstaller"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "lamquangminh.EVKey", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "HiBitSoftware.HiBitUninstaller"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
@@ -142,6 +218,7 @@ Install-RequiredPackage -StringList $listOfStrings
 Install-OptionalPackage "Bitdefender.Bitdefender"
 Install-OptionalPackage "Guru3D.Afterburner"
 Install-OptionalPackage "Guru3D.RTSS"
+Install-OptionalPackage "StartIsBack.StartAllBack"
 Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
