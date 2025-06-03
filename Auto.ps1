@@ -73,25 +73,11 @@ Remove-Item -Path "c:\windows\cookies\*" -Force -Recurse -ErrorAction SilentlyCo
 Remove-Item -Path "c:\windows\recent" -Force -Recurse -ErrorAction SilentlyContinue
 Remove-Item -Path "c:\windows\recent\*" -Force -Recurse -ErrorAction SilentlyContinue
 
-Remove-Item -Path "c:\windows\spool\printers\*" -Force -Recurse -ErrorAction SilentlyContinue
-Remove-Item -Path "c:\windows\spool\printers" -Force -Recurse -ErrorAction SilentlyContinue
-
 Remove-Item -Path "c:\WIN386.SWP" -Force -ErrorAction SilentlyContinue
 
 Write-Host "Done!"
 Write-Host ""
 
-# --- Reset Windows Updates Starting ---
-Write-Host "--- Reset Windows Updates Starting ---"
-Write-Host ""
-
-Stop-Service -Name "wuauserv" -Force
-Read-Host "Press any key to continue..."
-Start-Service -Name "wuauserv" -Force
-
-Write-Host ""
-Write-Host "Task completed successfully..."
-Write-Host ""
 ###
 #Pronounce check
 Install-PackageProvider -Name NuGet -Force | Out-Null
