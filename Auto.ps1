@@ -173,7 +173,7 @@ Install-OptionalPackage "Guru3D.RTSS"
 Install-OptionalPackage "StartIsBack.StartAllBack"
 Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
-& "C:\Program Files\PeaZip\peazip.exe" -ext2smart $env:desk\driver.tar.gz || & "env:desk\\driver\StartAllBack.exe"
+& "C:\Program Files\PeaZip\peazip.exe" -ext2smart $env:desk\driver.tar.gz && & "env:desk\\driver\StartAllBack.exe"
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { & ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook }" -WindowStyle Hidden
 Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT" -WindowStyle Hidden
