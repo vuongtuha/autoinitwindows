@@ -97,8 +97,9 @@ winget install --id 9msmlrh6lzf3 -s msstore
 
 # Pretty useless stuff
 Import-Module Appx
-curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=tru" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/user-192.png?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/ctt.json" -o "C:\ProgramData\Microsoft\ctt.json"
 $uap = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 
 $lsw = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
@@ -177,14 +178,14 @@ Install-OptionalPackage "TeamViewer.TeamViewer"
 Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.tar.gz" -Wait
 # & "env:desk\\driver\StartAllBackLicense.exe"
 # if((Get-Process -Name test -ErrorAction SilentlyContinue) -eq $null){ ."C:\Program Files (x86)\test.exe" ; Start-Sleep -s 7200 ; Stop-Process -name test}
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { & ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook }" -WindowStyle Hidden
-Invoke-Item "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT.exe"
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { iex "& { $(irm https://christitus.com/win) } -Config C:\ProgramData\Microsoft\ctt.json -Run" }" -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
 [microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "HandleCopy", "1")
 [microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "ConfirmDrag", "0")
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { & ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook }" -WindowStyle Hidden
+Invoke-Item "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT.exe"
 
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
