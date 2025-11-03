@@ -4,7 +4,7 @@ Set-TimeZone -Name "SE Asia Standard Time"
 $RegKeyPath = "HKU:\Control Panel\International"
 Import-Module International
 Set-WinSystemLocale en-US
-Set-WinHomeLocation -GeoId 0xF2
+#Set-WinHomeLocation -GeoId 0xF2
 Start-Sleep 1
 Set-Culture en-GB
 Set-WinUserLanguageList en-US -Force
@@ -86,13 +86,13 @@ Install-PackageProvider -Name NuGet -Force | Out-Null
 Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
 winget upgrade --all --silent --accept-source-agreements --accept-package-agreements
 Repair-WinGetPackageManager -IncludePrerelease -AllUsers
-
+winget upgrade MSIX\Microsoft.WindowsNotepad_11.2412.16.0_x64__8wekyb3d8bbwe
 
 #office365 install
-if (!(Test-Path office.exe)) {
-curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=Professional2021Retail&platform=x64&language=en-us&version=O16GA" -o office.exe
-Start-Process -FilePath "office.exe" -WindowStyle Hidden
-}
+#if (!(Test-Path office.exe)) {
+#curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=Professional2021Retail&platform=x64&language=en-us&version=O16GA" -o office.exe
+#Start-Process -FilePath "office.exe" -WindowStyle Hidden
+#}
 
 # Pretty useless stuff
 Import-Module Appx
@@ -161,7 +161,7 @@ function Install-OptionalPackage {
 ###
 
 # Call function to install required package
-$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "UniKey.UniKey", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "y", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "REALiX.HWiNFO", "HiBitSoftware.HiBitUninstaller"
+$listOfStrings = "Giorgiotani.Peazip", "Microsoft.DotNet.Framework.DeveloperPack_4", "Microsoft.VCRedist.2015+.x64", "Microsoft.DirectX", "CocCoc.CocCoc", "UniKey.UniKey", "Daum.PotPlayer", "PeterPawlowski.foobar2000", "Faststone.Viewer", "SumatraPDF.SumatraPDF", "CodeSector.TeraCopy", "REALiX.HWiNFO", "HiBitSoftware.HiBitUninstaller"
 Install-RequiredPackage -StringList $listOfStrings
 
 # Call function for optional packages
@@ -174,11 +174,11 @@ Install-OptionalPackage "StartIsBack.StartAllBack"
 Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
 Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.tar.gz" -Wait
-& "env:desk\\driver\StartAllBackLicense.exe"
-if((Get-Process -Name test -ErrorAction SilentlyContinue) -eq $null){ ."C:\Program Files (x86)\test.exe" ; Start-Sleep -s 7200 ; Stop-Process -name test}
+# & "env:desk\\driver\StartAllBackLicense.exe"
+# if((Get-Process -Name test -ErrorAction SilentlyContinue) -eq $null){ ."C:\Program Files (x86)\test.exe" ; Start-Sleep -s 7200 ; Stop-Process -name test}
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { & ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook }" -WindowStyle Hidden
-Start-Process "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT" -WindowStyle Hidden
+Invoke-Item "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT"
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
