@@ -96,8 +96,8 @@ winget upgrade MSIX\Microsoft.WindowsNotepad_11.2412.16.0_x64__8wekyb3d8bbwe
 
 # Pretty useless stuff
 Import-Module Appx
-curl -Uri "" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
-curl -Uri "" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
+curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/user-192.png?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
 $uap = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 
 $lsw = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
