@@ -1,0 +1,29 @@
+{
+    "WPFTweaks":  [
+                      "WPFTweaksRestorePoint",
+                      "WPFTweaksWifi",
+                      "WPFTweaksStorage",
+                      "WPFTweaksConsumerFeatures",
+                      "WPFTweaksDVR",
+                      "WPFTweaksTele",
+                      "WPFTweaksAH",
+                      "WPFTweaksEndTaskOnTaskbar",
+                      "WPFTweaksLoc",
+                      "WPFTweaksRemoveOnedrive",
+                      "WPFTweaksDiskCleanup",
+                      "WPFTweaksHome",
+                      "WPFTweaksDisableExplorerAutoDiscovery",
+                      "WPFTweaksPowershell7Tele",
+                      "WPFTweaksDeleteTempFiles",
+                      "WPFTweaksServices"
+                  ],
+    "Install":  [
+
+                ],
+    "WPFInstall":  [
+
+                   ],
+    "WPFFeature":  [
+
+                   ]
+}
