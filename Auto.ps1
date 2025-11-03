@@ -86,7 +86,8 @@ Install-PackageProvider -Name NuGet -Force | Out-Null
 Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
 winget upgrade --all --silent --accept-source-agreements --accept-package-agreements
 Repair-WinGetPackageManager -IncludePrerelease -AllUsers
-winget upgrade MSIX\Microsoft.WindowsNotepad_11.2412.16.0_x64__8wekyb3d8bbwe
+winget install "Microsoft Store"
+winget install --id 9msmlrh6lzf3 -s msstore
 
 #office365 install
 #if (!(Test-Path office.exe)) {
@@ -178,10 +179,13 @@ Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext
 # if((Get-Process -Name test -ErrorAction SilentlyContinue) -eq $null){ ."C:\Program Files (x86)\test.exe" ; Start-Sleep -s 7200 ; Stop-Process -name test}
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { irm https://christitus.com/win | iex }" -WindowStyle Hidden
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { & ([ScriptBlock]::Create((curl.exe -s --doh-url https://1.1.1.1/dns-query https://get.activated.win | Out-String))) /HWID /Ohook }" -WindowStyle Hidden
-Invoke-Item "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT"
+Invoke-Item "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\UniKey.UniKey_Microsoft.Winget.Source_8wekyb3d8bbwe\UniKeyNT.exe"
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
+[microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "HandleCopy", "1")
+[microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "ConfirmDrag", "0")
+
 $l = @'
  "ROFL:ROFL:ROFL:ROFL"   /$$$$$$$$ /$$           /$$           /$$                       /$$
          _^___          | $$_____/|__/          |__/          | $$                      | $$
