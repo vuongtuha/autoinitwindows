@@ -127,7 +127,8 @@ Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Mi
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
 cd ([Environment]::GetFolderPath('Desktop'))
-Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/12.4.0.585/Driver_B00ster_Pro_12.4.0.585.7z -o driver.tar.gz
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/13.0.0.143/Driver_B00ster_Pro_13.0.0.143.7z
+ -o driver.tar.gz
 }"
 
 
@@ -176,9 +177,9 @@ Install-OptionalPackage "StartIsBack.StartAllBack"
 Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
 Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.tar.gz" -Wait
-# & "env:desk\\driver\StartAllBackLicense.exe"
-# if((Get-Process -Name test -ErrorAction SilentlyContinue) -eq $null){ ."C:\Program Files (x86)\test.exe" ; Start-Sleep -s 7200 ; Stop-Process -name test}
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", "& { iex "& { $(irm https://christitus.com/win) } -Config C:\ProgramData\Microsoft\ctt.json -Run" }" -WindowStyle Hidden
+ii "$env:desk\driver\Driver Booster.exe"
+ii -path "$env:desk\driver\SAB.exe"
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", '& ([scriptblock]::Create((Invoke-RestMethod https://christitus.com/win))) -Config C:\ProgramData\Microsoft\ctt.json -Run' -WindowStyle Hidden
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
 Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
