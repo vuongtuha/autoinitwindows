@@ -84,10 +84,7 @@ $env:desk=[Environment]::GetFolderPath("Desktop")
 #Pronounce check
 Install-PackageProvider -Name NuGet -Force | Out-Null
 Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
-winget upgrade --all --silent --accept-source-agreements --accept-package-agreements
 Repair-WinGetPackageManager -IncludePrerelease -AllUsers
-winget install "Microsoft Store"
-winget install --id 9msmlrh6lzf3 -s msstore
 
 #office365 install
 #if (!(Test-Path office.exe)) {
@@ -99,7 +96,7 @@ winget install --id 9msmlrh6lzf3 -s msstore
 Import-Module Appx
 curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/xp.jpg?raw=tru" -o "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/user-192.png?raw=true" -o "C:\ProgramData\Microsoft\User Account Pictures\user-192.png"
-curl -Uri "https://github.com/vuongtuha/autoinitwindows/blob/main/ctt.json" -o "C:\ProgramData\Microsoft\ctt.json"
+curl -Uri "https://raw.githubusercontent.com/vuongtuha/autoinitwindows/refs/heads/main/ctt.json" -o "C:\ProgramData\Microsoft\ctt.json"
 $uap = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 
 $lsw = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
@@ -122,13 +119,14 @@ New-ItemProperty -Path $uap -Name "UseDefaultTile" -PropertyType "DWORD" -Value 
 
 Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Microsoft\User Account Pictures\xp.jpg"
 #skip-bcoz-stupid-dependencies-loophole
-
+winget upgrade --all --silent --accept-source-agreements --accept-package-agreements
+winget install "Microsoft Store" --accept-source-agreements --accept-package-agreements
+winget install --id 9msmlrh6lzf3 -s msstore
 #Driver-autotool
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
-cd ([Environment]::GetFolderPath('Desktop'))
-Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/13.0.0.143/Driver_B00ster_Pro_13.0.0.143.7z
- -o driver.tar.gz
+cd $env:desk
+Invoke-WebRequest -uri 'https://github.com/vuongtuha/autoinitwindows/releases/download/13.0.0.143/Driver_B00ster_Pro_13.0.0.143.7z' -o driver.7z
 }"
 
 
@@ -155,7 +153,7 @@ function Install-OptionalPackage {
   $confirmation = Read-Host "Do you want to install the optional package: $PackageName ? "
 
   if ($confirmation -like 'y*') {
-    winget install $PackageName
+    winget install --id $PackageName
     Write-Host "Installing optional package: $PackageName"
   } else {
     Write-Host "Skipping optional package: $PackageName"
@@ -176,7 +174,7 @@ Install-OptionalPackage "Guru3D.RTSS"
 Install-OptionalPackage "StartIsBack.StartAllBack"
 Install-OptionalPackage "TeamViewer.TeamViewer"
 # Open PowerShell instance
-Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.tar.gz" -Wait
+Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.7z" -Wait
 ii "$env:desk\driver\Driver Booster.exe"
 ii -path "$env:desk\driver\SAB.exe"
 Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", '& ([scriptblock]::Create((Invoke-RestMethod https://christitus.com/win))) -Config C:\ProgramData\Microsoft\ctt.json -Run' -WindowStyle Hidden
