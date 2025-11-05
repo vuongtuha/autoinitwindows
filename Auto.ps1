@@ -126,7 +126,7 @@ winget install --id 9msmlrh6lzf3 -s msstore
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
 cd $env:desk
-Invoke-WebRequest -uri 'https://github.com/vuongtuha/autoinitwindows/releases/download/13.0.0.143/Driver_B00ster_Pro_13.0.0.143.7z' -o driver.7z
+Invoke-WebRequest -uri https://github.com/vuongtuha/autoinitwindows/releases/download/13.0.0.143/Driver_B00ster_Pro_13.0.0.143.7z -o driver.7z
 }"
 
 
