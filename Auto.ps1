@@ -16,9 +16,16 @@ w32tm /unregister
 w32tm /register
 net start w32time
 w32tm /resync /nowait
-
+Set-ItemProperty -LiteralPath 'Registry::HKEY_CURRENT_USER)\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '20D04FE0-3AEA-1069-A2D8-08002B30309D' -Type "DWord" -Value 0
 $env:desk=[Environment]::GetFolderPath("Desktop")
-
+#Disable quick edit mode
+Set-Location HKCU:\Console
+New-Item ‘.%SystemRoot%_System32_WindowsPowerShell_v1.0_Powershell.exe’
+Set-Location ‘.%SystemRoot%_System32_WindowsPowerShell_v1.0_Powershell.exe’
+New-ItemProperty . QuickEdit –Type DWORD –Value 0x00000000
+Start-Process Powershell.exe “&{ <#The scrip block you want to run with Quick Edit disabled#> }”
+Set-ItemProperty . QuickEdit –Value 0x00000001
+Pop-Location
 #Fix-100-disk-hdd-fck-up
 # --- SYSTEM FILE CHECKER STARTED ---
 #Write-Host "--- SYSTEM FILE CHECKER STARTED ---"
@@ -90,6 +97,7 @@ Repair-WinGetPackageManager -IncludePrerelease -AllUsers
 #if (!(Test-Path office.exe)) {
 #curl -Uri "https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=Professional2021Retail&platform=x64&language=en-us&version=O16GA" -o office.exe
 #Start-Process -FilePath "office.exe" -WindowStyle Hidden
+Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", '& ([scriptblock]::Create((Invoke-RestMethod https://christitus.com/win))) -Config C:\ProgramData\Microsoft\ctt.json -Run' -WindowStyle Hidden
 #}
 
 # Pretty useless stuff
@@ -121,7 +129,7 @@ Set-ItemProperty -Path $lsw -Name LockScreenImagePath -value  "C:\ProgramData\Mi
 #skip-bcoz-stupid-dependencies-loophole
 winget upgrade --all --silent --accept-source-agreements --accept-package-agreements
 winget install "Microsoft Store" --accept-source-agreements --accept-package-agreements
-winget install --id 9msmlrh6lzf3 -s msstore
+winget install --id 9msmlrh6lzf3 -s msstore --accept-package-agreements
 #Driver-autotool
 
 Start-Process PowerShell -ArgumentList "-Command", "& {
@@ -177,9 +185,8 @@ Install-OptionalPackage "TeamViewer.TeamViewer"
 Start-Process -FilePath "C:\Program Files\PeaZip\peazip.exe" -ArgumentList "-ext2smart $env:desk\driver.7z" -Wait
 ii "$env:desk\driver\Driver Booster.exe"
 ii -path "$env:desk\driver\SAB.exe"
-Start-Process PowerShell.exe -ArgumentList "-NoExit", "-Command", '& ([scriptblock]::Create((Invoke-RestMethod https://christitus.com/win))) -Config C:\ProgramData\Microsoft\ctt.json -Run' -WindowStyle Hidden
-Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -Recurse -dir | foreach { Remove-Item -Force -Recurse -Path $_}
-Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
+Get-ChildItem -Path ([Environment]::GetFolderPath("Desktop")) -file | Where-Object {$_.Name -eq "driver.7z"} | Remove-Item -Force
+#Get-ChildItem -Path ([Environment]::GetFolderPath("MyDocuments")) -file | Where-Object {$_.Name -NotContains "office.exe"} | Remove-Item -Force -Recurse
 regsvr32 "$env:ProgramFiles\TeraCopy\TeraCopy.dll"
 [microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "HandleCopy", "1")
 [microsoft.win32.registry]::SetValue("HKEY_CURRENT_USER\Software\Code Sector\TeraCopy", "ConfirmDrag", "0")
